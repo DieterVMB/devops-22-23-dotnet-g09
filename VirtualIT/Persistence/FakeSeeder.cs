@@ -42,6 +42,7 @@ public class FakeSeeder
         Klant klant3 = new(false, "Bedrijf en Organisatie", "Bedrijfsmanagement", null, null, new Aanspreekpunt("Xander", "Nuytinck", "xandernuytinck@gmail.com", "0471017595"), new Aanspreekpunt("Brian", "Luo", "brianluo@gmail.com", "0475956735"));
         Klant klant4 = new(true, null, null, "KBC", "UNIZO", new Aanspreekpunt("Egon", "Dehandschutter", "egondehandschutter@hotmail.com", "0471019543"), new Aanspreekpunt("Dieter", "Van Meerbeeck", "dietervanmeerbeeck@hotmail.com", "0471016969"));
         Klant klant5 = new(true, null, null, "Proximus", "VOKA", new Aanspreekpunt("Lars", "Dehandschutter", "larsdehandschutter@gmail.com", "0471028374"), new Aanspreekpunt("Dieter", "Van Meerbeeck", "dietervanmeerbeeck@hotmail.com", "0471016969"));
+        Klant klant6 = new(false, "Directie", null, null, null, new Aanspreekpunt("Brian", "Luo", "brianluo@gmail.com", "0475956735"), new Aanspreekpunt("Dieter", "Van Meerbeeck", "dietervanmeerbeeck@hotmail.com", "0471016969"));
 
         Beheerder bd = new("Dieter", "Van Meerbeeck", "dieter.vanmeerbeeck@student.hogent.be", "IT en Digitale Innovatie", Rol.Beheerder, true, "auth0|63a84b54d53ea3596eb38cd9");
         Beheerder bx = new("Xander", "Nuytinck", "xander.nuytinck@student.hogent.be", "IT en Digitale Innovatie", Rol.Beheerder, true, "auth0|63a84b7ad53ea3596eb38cdb");
@@ -81,6 +82,7 @@ public class FakeSeeder
         klanten.Add(klant3);
         klanten.Add(klant4);
         klanten.Add(klant5);
+        klanten.Add(klant6);
 
         templates.Add(mSSQL);
         templates.Add(mySql);
