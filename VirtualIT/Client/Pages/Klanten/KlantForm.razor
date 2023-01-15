@@ -1,0 +1,148 @@
+﻿@page "/klant/aanmaken"
+@page "/klant/aanpassen/{id:int}"
+@attribute [Authorize(Roles = "Administrator, Beheerder")]
+
+@if (Id == 0) {
+    <PageTitle>Klant aanmaken</PageTitle>
+} else {
+    <PageTitle>Klant wijzigen</PageTitle>
+}
+
+@if (klant == null) {
+    <p><em>Loading...</em></p>
+} else {
+    <div class="titleBox">
+        @if (Id == 0) {
+            <span class="oi oi-plus title-icon" aria-hidden="true" />
+            <p class="pageTitle">Klant aanmaken</p>
+        } else {
+            <span class="oi oi-pencil title-icon" aria-hidden="true" />
+            <p class="pageTitle">Klant wijzigen</p>
+        }
+    </div>
+
+    <div class="top-row px-4" />
+
+
+    <EditForm Model="@klant" OnValidSubmit="@HandleForm">
+        <div class="inhoudBox">
+            <div class="form">
+                <FluentValidationValidator />
+                <p>
+                    <label class="label">
+                        Type klant:<br />
+                        <InputSelect class="ForInput" id="type" @bind-Value="klant.Extern">
+                            <option value="-1" disabled selected>-- selecteer type klant --</option>
+
+                            <option value=false>Interne klant</option>
+                            <option value=true>Externe klant</option>
+                        </InputSelect>
+                        <ValidationMessage For="@(() => klant.Extern)" />
+                    </label>
+                </p>
+
+                @if (klant.Extern) {
+                    <p>
+                        <label class="label">
+                            Naam externe klant:<br />
+                            <InputText class="ForInput" id="klantnaam" @bind-Value="klant.KlantNaam" />
+                            <ValidationMessage For="@(() => klant.KlantNaam)" />
+                            @if (bestaatAl) {
+                                <p style="color:red">Klant met deze naam bestaat al!</p>
+                            }
+                        </label>
+                        &ensp;
+                        <label class="label">
+                            Type externe klant:<br />
+                            <InputText class="ForInput" id="extern_type" @bind-Value="klant.ExternType" />
+                            <ValidationMessage For="@(() => klant.ExternType)" />
+                        </label>
+                    </p>
+                } else {
+                    <p>
+                        <label class="label">
+                            Departementen/onderzoekcentra/directies:<br />
+                            <InputText class="ForInput" id="departement" @bind-Value="klant.Departement" />
+                            <ValidationMessage For="@(() => klant.Departement)" />
+                            @if (bestaatAl) {
+                                <p style="color:red">Klant met deze combinatie departementen/onderzoekcentra/directies en opleiding bestaat al!</p>
+                            }
+                        </label>
+                        &ensp;
+                        <label class="label">
+                            Opleiding:<br />
+                            <InputText class="ForInput" id="opleiding" @bind-Value="klant.Opleiding" />
+                            <ValidationMessage For="@(() => klant.Opleiding)" />
+                        </label>
+                    </p>
+                }
+
+                <!--Aanspreekpunt-->
+                <h5>Aanspreekpunt:</h5>
+
+                <p>
+                    <label class="label">
+                        Voornaam:<br />
+                        <InputText class="ForInput" id="aanspreekpunt_voornaam" @bind-Value="klant.Aanspreekpunt.Voornaam" />
+                        <ValidationMessage For="@(() => klant.Aanspreekpunt.Voornaam)" />
+                    </label>
+                    &ensp;
+                    <label class="label">
+                        Naam:<br />
+                        <InputText class="ForInput" id="aanspreekpunt_naam" @bind-Value="klant.Aanspreekpunt.Naam" />
+                        <ValidationMessage For="@(() => klant.Aanspreekpunt.Naam)" />
+                    </label>
+                </p>
+
+                <p>
+                    <label class="label">
+                        E-mailadres:<br />
+                        <InputText class="ForInput" id="aanspreektpunt_email" @bind-Value="klant.Aanspreekpunt.Email" />
+                        <ValidationMessage For="@(() => klant.Aanspreekpunt.Email)" />
+                    </label>
+                    &ensp;
+                    <label class="label">
+                        Telefoonnummer:<br />
+                        <InputText class="ForInput" id="aanspreektpunt_telefoonnummer" @bind-Value="klant.Aanspreekpunt.Telefoonnummer" />
+                        <ValidationMessage For="@(() => klant.Aanspreekpunt.Telefoonnummer)" />
+                    </label>
+                </p>
+
+                <!--Backup aanspreekpunt-->
+                <h5>Backup aanspreekpunt:</h5>
+
+                <p>
+                    <label class="label">
+                        Voornaam:<br />
+                        <InputText class="ForInput" id="backupaanspreektpunt_voornaam" @bind-Value="klant.BackupAanspreekpunt.Voornaam" />
+                        <ValidationMessage For="@(() => klant.BackupAanspreekpunt.Voornaam)" />
+                    </label>
+                    &ensp;
+                    <label class="label">
+                        Naam:<br />
+                        <InputText class="ForInput" id="backupaanspreektpunt_naam" @bind-Value="klant.BackupAanspreekpunt.Naam" />
+                        <ValidationMessage For="@(() => klant.BackupAanspreekpunt.Naam)" />
+                    </label>
+                </p>
+
+                <p>
+                    <label class="label">
+                        E-mailadres:<br />
+                        <InputText class="ForInput" id="backupaanspreektpunt_email" @bind-Value="klant.BackupAanspreekpunt.Email" />
+                        <ValidationMessage For="@(() => klant.BackupAanspreekpunt.Email)" />
+                    </label>
+                    &ensp;
+                    <label class="label">
+                        Telefoonnummer:<br />
+                        <InputText class="ForInput" id="backupaanspreektpunt_telefoonnummer" @bind-Value="klant.BackupAanspreekpunt.Telefoonnummer" />
+                        <ValidationMessage For="@(() => klant.BackupAanspreekpunt.Telefoonnummer)" />
+                    </label>
+                </p>
+
+                <button type="submit" class="bevestig-button btn btn-light">
+                    Bevestig
+                </button>
+            </div>
+        </div>
+    </EditForm>
+}

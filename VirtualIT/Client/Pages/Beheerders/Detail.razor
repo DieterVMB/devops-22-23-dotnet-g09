@@ -1,0 +1,37 @@
+﻿@page "/beheerder/{id:int}"
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "Administrator, Beheerder, Gebruiker")]
+
+<PageTitle>Beheerders</PageTitle>
+
+@if(beheerder == null){
+    <p><em>Loading...</em></p>
+}
+else {
+    <MudContainer Class="titleBox">
+        <span class="oi oi-person title-icon" aria-hidden="true" />
+
+        <p class="pageTitle">@beheerder.Voornaam @beheerder.Naam</p>
+
+        <button class="btn_terug btn btn-light" @onclick="GoBack">Terug</button>
+    </MudContainer>
+    <MudContainer Class="inhoudBox">
+        <MudText Typo="Typo.h4">Informatie beheerder</MudText>
+
+        <MudList>
+            <MudListItem>Voornaam: @beheerder.Voornaam</MudListItem>
+            <MudListItem>Naam: @beheerder.Naam</MudListItem>
+            <MudListItem>Email: @beheerder.Email</MudListItem>
+            <MudListItem>Departement: @beheerder.Departement</MudListItem>
+            <MudListItem>Rol: @beheerder.Rol.ToString()</MudListItem>
+            <MudListItem>Actief: @(beheerder.IsActief ? "Ja" : "Nee")</MudListItem>
+        </MudList>
+    </MudContainer>
+}
+
+<style>
+    .btn_terug {
+        margin-left: auto;
+        background: #D3D3D3;
+    }
+</style>

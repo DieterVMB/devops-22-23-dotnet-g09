@@ -1,0 +1,23 @@
+﻿@using GridShared.Columns
+@using VirtualIT.Shared.Beheerder
+@implements ICustomGridComponent<BeheerderDto.Index>
+@inject NavigationManager NavigationManager
+
+<button class='btn btn-sm btn-primary' @onclick="MyClickHandler"><span class="oi oi-magnifying-glass" aria-hidden="true" /></button>
+
+@code {
+    [Parameter]
+    public BeheerderDto.Index Item { get; set; }
+
+    [Parameter]
+    public CGrid<BeheerderDto.Index> Grid { get; set; }
+
+    [Parameter]
+    public object Object { get; set; }
+
+    private void MyClickHandler(MouseEventArgs e) {
+        string gridState = Grid.GetState();
+        string returnUrl = (string)Object;
+        NavigationManager.NavigateTo($"/beheerder/{Item.Id}");
+    }
+}

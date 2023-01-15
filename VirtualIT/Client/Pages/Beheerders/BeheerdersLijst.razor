@@ -1,0 +1,29 @@
+﻿@page "/beheerders"
+@using VirtualIT.Shared.Beheerder;
+@using VirtualIT.Shared.Klanten
+@using GridShared
+@using GridShared.Utility
+@using Microsoft.Extensions.Primitives
+@inject NavigationManager NavigationManager
+@inject HttpClient HttpClient
+
+@attribute [Authorize(Roles = "Administrator, Beheerder, Gebruiker")]
+
+<PageTitle>Beheerders</PageTitle>
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="~/lib/font-awesome/css/all.css" rel="stylesheet" />
+</head>
+<div class="titleBox">
+    <span class="oi oi-magnifying-glass title-icon" aria-hidden="true" />
+
+    <p class="pageTitle">Beheerders</p>
+</div>
+
+@if(_task.IsCompleted) {
+    <GridComponent T="BeheerderDto.Index" Grid="@_grid"></GridComponent>
+}
+else {
+    <p><em>Loading...</em></p>
+}

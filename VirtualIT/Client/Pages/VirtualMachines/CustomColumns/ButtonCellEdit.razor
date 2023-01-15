@@ -1,0 +1,23 @@
+﻿@using GridShared.Columns
+@using VirtualIT.Shared.VirtualMachines
+@implements ICustomGridComponent<VirtualMachineDto.Detail>
+@inject NavigationManager NavigationManager
+
+<button class='btn btn-sm btn-primary' @onclick="MyClickHandler"><span class="oi oi-pencil" aria-hidden="true" /></button>
+
+@code {
+    [Parameter]
+    public VirtualMachineDto.Detail Item { get; set; }
+
+    [Parameter]
+    public CGrid<VirtualMachineDto.Detail> Grid { get; set; }
+
+    [Parameter]
+    public object Object { get; set; }
+
+    private void MyClickHandler(MouseEventArgs e) {
+        string gridState = Grid.GetState();
+        string returnUrl = (string)Object;
+        NavigationManager.NavigateTo($"/vm/aanpassen/{Item.Id}");
+    }
+}

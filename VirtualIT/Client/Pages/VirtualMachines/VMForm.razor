@@ -1,0 +1,279 @@
+﻿@page "/vm/aanmaken"
+@page "/vm/aanpassen/{id:int}"
+@using VirtualIT.Domain.VirtualMachines
+@using MudBlazor.Extensions
+@attribute [Authorize(Roles = "Administrator, Beheerder")]
+
+@if (Id == 0) {
+    <PageTitle>Virtuele machine aanmaken</PageTitle>
+} else {
+    <PageTitle>Virtuele machine wijzigen</PageTitle>
+}
+
+@if (virtualMachine == null) {
+    <p><em>Loading...</em></p>
+} else {
+    <div class="titleBox">
+        @if (Id == 0) {
+            <span class="oi oi-plus title-icon" aria-hidden="true" />
+
+            <p class="pageTitle">Virtuele machine aanmaken</p>
+        } else {
+            <span class="oi oi-pencil title-icon" aria-hidden="true" />
+
+            <p class="pageTitle">Virtuele machine wijzigen</p>
+        }
+    </div>
+
+    <div class="top-row px-4" />
+
+    <EditForm Model="@virtualMachine" OnValidSubmit="@HandleForm">
+        <FluentValidationValidator />
+        <div class="inhoudBox">
+            <div class="form">
+                <h5>Details virtuele machine:</h5>
+
+                <p>
+                    <label class="label">
+                        Virtuele machine naam:<br />
+                        <InputText class="ForInput" id="naam" @bind-Value="virtualMachine.Naam" />
+                        <ValidationMessage For="@(() => virtualMachine.Naam)" />
+                        @if (vmBestaatAl) {
+                            <p style="color:red">Virtuele machine met deze naam bestaat al!</p>
+                        }
+                    </label>
+                    &ensp;
+                    <label class="label">
+                        Hostnaam:<br />
+                        <InputText class="ForInput" id="hostname" @bind-Value="virtualMachine.Hostname" />
+                        <ValidationMessage For="@(() => virtualMachine.Hostname)" />
+                    </label>
+                    &ensp;
+                    <label class="label">
+                        FQDN:<br />
+                        <InputText class="ForInput" id="fqdn" @bind-Value="virtualMachine.FQDN" />
+                        <ValidationMessage For="@(() => virtualMachine.FQDN)" />
+                    </label>
+                    &ensp;
+                    <label class="label">
+                        #Vcpu:<br />
+                        <InputNumber class="ForInput" id="vcpu" @bind-Value="virtualMachine.Vcpu" />
+                        <ValidationMessage For="@(() => virtualMachine.Vcpu)" />
+                    </label>
+                </p>
+                <p>
+                    <label class="label">
+                        #Memory (GB):<br />
+                        <InputNumber class="ForInput" id="memory" @bind-Value="virtualMachine.Memory" />
+                        <ValidationMessage For="@(() => virtualMachine.Memory)" />
+                    </label>
+                    &ensp;
+                    <label class="label">
+                        #Storage (GB):<br />
+                        <InputNumber class="ForInput" id="storage" @bind-Value="virtualMachine.Storage" />
+                        <ValidationMessage For="@(() => virtualMachine.Storage)" />
+                    </label>
+                    &ensp;
+                    <label class="label">
+                        Mode:<br />
+                        <InputSelect class="ForInput" id="mode" @bind-Value="virtualMachine.Mode">
+                            <option value="-1" disabled selected>-- selecteer mode --</option>
+
+                            @foreach (var mode in Enum.GetValues(typeof(Mode))) {
+                                <option value="@mode">@mode</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => virtualMachine.Mode)" />
+                    </label>
+                    &ensp;
+                    @if (virtualMachine.Mode != Mode.IAAS) {
+                        <label class="label">
+                            Template:<br />
+                            <InputSelect class="ForInput" id="template" @bind-Value="templateId">
+                                <option value="0" selected>Geen template</option>
+                                @foreach (var template in templates) {
+                                    <option value="@template.Id">@template.Naam</option>
+                                }
+                            </InputSelect>
+                        </label>
+                    }
+                </p>
+                <p>
+                    <label class="label">
+                        Open poorten (gescheiden met komma's): <br />
+                        <InputText class="ForInput" id="externe_toegangspoorten" @bind-Value="virtualMachine.ExterneToegangspoorten" />
+                        <ValidationMessage For="@(() => virtualMachine.ExterneToegangspoorten)" />
+                    </label>
+                    &ensp;
+                    <label class="label">
+                        Host server VM: <br />
+                        <InputSelect class="ForInput" id="server" @bind-Value="serverId">
+                            <option value="0" disabled>-- selecteer server --</option>
+                            @foreach (var server in servers) {
+                                <option value="@server.Id">@server.Naam</option>
+                            }
+                        </InputSelect>
+                        @if (serverNietGenoegRuimte) {
+                            <p style="color:red">Deze server heeft niet genoeg resource voor deze virtuele machine!</p>
+                        }
+                        @if (geenServerGeselecteerd) {
+                            <p style="color:red">Gelieve een server te selecteren!</p>
+                        }
+                    </label>
+                </p>
+                <p>
+                    <label class="label">
+                        <InputCheckbox id="backup" @bind-Value="virtualMachine.Backup" />
+                        Backup
+                        <ValidationMessage For="@(() => virtualMachine.Backup)" />
+                    </label>
+                    &ensp;
+                    <label class="label">
+                        <InputCheckbox id="high_available" @bind-Value="virtualMachine.HighAvailable" />
+                        High available
+                        <ValidationMessage For="@(() => virtualMachine.HighAvailable)" />
+                    </label>
+                </p>
+
+                @if (virtualMachine.Backup) {
+                    <p>
+                        <label class="label">
+                            Backup frequentie:<br />
+                            <InputSelect class="ForInput" id="backup_frequentie" @bind-Value="virtualMachine.BackupFrequentie">
+                                <option value="null" disabled selected>-- selecteer frequentie --</option>
+
+                                <option value="dagelijks">Dagelijks</option>
+                                <option value="wekelijks">Wekelijks </option>
+                                <option value="maandelijks">Maandelijks</option>
+                            </InputSelect>
+                            <ValidationMessage For="@(() => virtualMachine.BackupFrequentie)" />
+                        </label>
+                    </p>
+                }
+
+                <!--Aanvrager-->
+                <h5>Details aanvraag virtuele machine:</h5>
+
+                <p>
+                    <label class="label">
+                        Klant: <br />
+                        <InputSelect class="ForInput" id="type" @bind-Value="klantId">
+                            <option value="0" disabled>-- Interne klanten --</option>
+                            @foreach (var klant in interneKlanten) {
+                                <option value="@klant.Id">@(klant.Opleiding != null ? $"{klant.Departement} - {klant.Opleiding}" : $"{klant.Departement}")</option>
+                            }
+                            <option value="0" disabled>-- Externe klanten --</option>
+                            @foreach (var klant in externeKlanten) {
+                                <option value="@klant.Id">@klant.KlantNaam</option>
+                            }
+                        </InputSelect>
+                        @if (geenKlantGeselecteerd) {
+                            <p style="color:red">Gelieve een server te selecteren!</p>
+                        }
+                    </label>
+                    &ensp;
+                    <label class="label">
+                        Toegewezen beheerder: <br />
+                        <InputSelect class="ForInput" id="beheerder" @bind-Value="beheerderId">
+                            <option value="0" disabled>-- selecteer beheerder --</option>
+                            @foreach (var beheerder in beheerders) {
+                                <option value="@beheerder.Id">@beheerder.Voornaam @beheerder.Naam</option>
+                            }
+                        </InputSelect>
+                        @if (geenBeheerderGeselecteerd) {
+                            <p style="color:red">Gelieve een server te selecteren!</p>
+                        }
+                    </label>
+                </p>
+
+                <p>
+                    <label class="label">
+                        Naam aanvrager:<br />
+                        <InputText class="ForInput" id="naamaanvrager" @bind-Value="virtualMachine.NaamGebruiker" />
+                        <ValidationMessage For="@(() => virtualMachine.NaamGebruiker)" />
+                    </label>
+                    &ensp;
+                    <label class="label">
+                        E-mailadres aanvrager:<br />
+                        <InputText class="ForInput" id="emailaanvrager" @bind-Value="virtualMachine.EmailAanvrager" />
+                        <ValidationMessage For="@(() => virtualMachine.EmailAanvrager)" />
+                    </label>
+                    &ensp;
+                    <label class="label">
+                        Telefoonnummer aanvrager:<br />
+                        <InputText class="ForInput" id="telefoonnummeraanvrager" @bind-Value="virtualMachine.TelefoonnummerAanvrager" />
+                        <ValidationMessage For="@(() => virtualMachine.TelefoonnummerAanvrager)" />
+                    </label>
+                    &ensp;
+                    <label class="label">
+                        Relatie met de klant:<br />
+                        <InputText class="ForInput" id="relatie" @bind-Value="virtualMachine.RelatieGebruiker" />
+                        <ValidationMessage For="@(() => virtualMachine.RelatieGebruiker)" />
+                    </label>
+                </p>
+
+                <p>
+                    <label class="label">
+                        Datum aanvraag:<br />
+                        <InputDate class="ForInput" id="datumaanvraag" @bind-Value="virtualMachine.DatumAanvraag" />
+                        <ValidationMessage For="@(() => virtualMachine.DatumAanvraag)" />
+                    </label>
+                    &ensp;
+                    <label class="label">
+                        Status aanvraag:<br />
+                        <InputSelect class="ForInput" id="status" @bind-Value="virtualMachine.Status">
+                            <option value="-1" disabled selected>-- selecteer status --</option>
+
+                            @foreach (Status status in Enum.GetValues(typeof(Status))) {
+                                <option value="@status">@status.ToDescriptionString()</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => virtualMachine.Status)" />
+                    </label>
+
+                </p>
+                <p>
+                    <label class="label">
+                        Reden aanvraag:<br />
+                        <InputTextArea class="ForInput" id="reden" @bind-Value="virtualMachine.Reden" />
+                        <ValidationMessage For="@(() => virtualMachine.Reden)" />
+                    </label>
+                </p>
+
+                <h5>Beschikbaarheid virtuele machine voor de klant:</h5>
+                <p>
+                    <label class="label">
+                        Beschikbaarheid tijden:<br />
+                        <InputSelect class="ForInput" id="beschikbaarheid" @bind-Value="virtualMachine.Beschikbaarheid">
+                            <option value="-1" disabled selected>-- selecteer beschikbaarheid --</option>
+
+                            @foreach (Beschikbaarheid beschikbaarheid in Enum.GetValues(typeof(Beschikbaarheid))) {
+                                <option value="@beschikbaarheid">@beschikbaarheid.ToDescriptionString()</option>
+                            }
+
+                        </InputSelect>
+                        <ValidationMessage For="@(() => virtualMachine.Beschikbaarheid)" />
+                    </label>
+                </p>
+                <p>
+                    <label class="label">
+                        Startdatum:<br />
+                        <InputDate class="ForInput" id="startdatum" @bind-Value="virtualMachine.Startdatum" />
+                        <ValidationMessage For="@(() => virtualMachine.Startdatum)" />
+                    </label>
+                    &ensp;
+                    <label class="label">
+                        Einddatum:<br />
+                        <InputDate class="ForInput" id="einddatum" @bind-Value="virtualMachine.Einddatum" />
+                        <ValidationMessage For="@(() => virtualMachine.Einddatum)" />
+                    </label>
+                </p>
+                <div>
+                    <button type="submit" class="btn btn-light">
+                        Bevestig
+                    </button>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+}

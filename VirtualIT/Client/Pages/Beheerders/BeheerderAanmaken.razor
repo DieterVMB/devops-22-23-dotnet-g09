@@ -1,0 +1,84 @@
+﻿@page "/beheerder/aanmaken"
+@using VirtualIT.Domain.Beheerders
+@attribute [Authorize(Roles="Administrator")]
+
+<PageTitle>Beheerder aanmaken</PageTitle>
+
+<div class="titleBox">
+    <span class="oi oi-plus title-icon" aria-hidden="true" />
+
+    <p class="pageTitle">Beheerder aanmaken</p>
+</div>
+
+<div class="top-row px-4" />
+
+
+<EditForm Model="@beheerder" OnValidSubmit="@HandleCreate">
+    <FluentValidationValidator />
+    <div class="inhoudBox">
+        <div class="form">
+            <p>
+                <label class="label">
+                    Voornaam:
+                    <InputText class="ForInput" id="voornaam" @bind-Value="beheerder.Voornaam" />
+                    <ValidationMessage For="@(() => beheerder.Voornaam)" />
+                    @if(bestaatAl){
+                        <p style="color:red">Beheerder met deze naam bestaat al!</p>
+                    }
+                </label>
+            </p>
+            <p>
+                <label class="label">
+                    Naam:
+                    <InputText class="ForInput" id="naam" @bind-Value="beheerder.Naam" />
+                    <ValidationMessage For="@(() => beheerder.Naam)" />
+                </label>
+            </p>
+
+            <p class="label">
+                <label>E-mailadres:</label>
+                <InputText class="ForInput" id="email" @bind-Value="beheerder.Email" />
+                <ValidationMessage For="@(() => beheerder.Email)" />
+            </p>
+
+            <p class="label">
+                <label>Departement:</label>
+                <InputText class="ForInput" id="departement" @bind-Value="beheerder.Departement" />
+                <ValidationMessage For="@(() => beheerder.Departement)" />
+            </p>
+
+            <p class="label">
+                <label>Rol:</label>
+                <InputSelect class="ForInput" id="rol" @bind-Value="beheerder.Rol">
+                    <option value="-1" disabled selected>-- selecteer rol --</option>
+
+                    @foreach (var rol in Enum.GetValues(typeof(Rol))) {
+                        <option value="@rol">@rol</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => beheerder.Rol)" />
+            </p>
+
+            <p class="label">
+                <label>Wachtwoord:</label>
+                <InputText class="ForInput" type="password" id="wachtwoord" @bind-Value="beheerder.Wachtwoord" />
+                <ValidationMessage For="@(() => beheerder.Wachtwoord)" />
+            </p>
+
+            <p class="label">
+                <label>Bevestig wachtwoord:</label>
+                <InputText class="ForInput" type="password" @bind-Value="beheerder.BevestigWachtwoord" />
+            </p>
+
+            <p class="label">
+                <label>Account status:</label>
+                <InputCheckbox @bind-Value="beheerder.IsActief" />
+                <ValidationMessage For="@(() => beheerder.IsActief)" />
+            </p>
+
+            <button type="submit" class="bevestig-button btn btn-light">
+                Bevestig
+            </button>
+        </div>
+    </div>
+</EditForm>

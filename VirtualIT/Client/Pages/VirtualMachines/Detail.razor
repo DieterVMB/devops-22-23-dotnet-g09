@@ -1,0 +1,70 @@
+﻿@page "/vm/{id:int}"
+@using VirtualIT.Shared.VirtualMachines
+@using MudBlazor.Extensions;
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles="Administrator, Beheerder, Gebruiker")]
+
+<PageTitle>Virtual Machine - @vm?.Naam</PageTitle>
+
+@if(vm == null) {
+    <p><em>Loading...</em></p>
+}
+else {
+    <!--Titel-->
+    <MudContainer Class="titleBox">
+        <span class="oi oi-list title-icon" aria-hidden="true" />
+
+        <p class="pageTitle">@vm.Naam</p>
+
+        <button class="btn_terug btn btn-light" @onclick="GoBack">Terug</button>
+    </MudContainer>
+
+    <!--Details-->
+    <MudContainer Class="inhoudBox">
+        <MudText Typo="Typo.h4">Informatie virtuele machine</MudText>
+
+        <MudList>
+            <!--<MudListItem>Host: @vm.Host</MudListItem>-->
+            <MudListItem>Hostname: @vm.Hostname</MudListItem>
+            <MudListItem>Geheugen: @vm.Memory GB</MudListItem>
+            <MudListItem>Opslag: @vm.Storage GB</MudListItem>
+            <MudListItem>FQDN: @vm.FQDN</MudListItem>
+            <MudListItem>CPU: @vm.Vcpu</MudListItem>
+
+            <MudListItem>Backup: @(vm.Backup ? "Ja" : "Nee")</MudListItem>
+            @if(vm.Backup) {
+                <MudListItem>Backup frequentie: @vm.BackupFrequentie</MudListItem>
+            }
+            
+            <MudListItem>Beschikbaarheid: @vm.Beschikbaarheid.ToDescriptionString()</MudListItem> <!--enum-->
+            <MudListItem>High available: @(vm.HighAvailable ? "Ja" : "Nee")</MudListItem>
+            <MudListItem>Mode: @vm.Mode</MudListItem> <!--enum-->
+            <MudListItem>Status: @vm.Status.ToDescriptionString()</MudListItem> <!--enum-->
+            <MudListItem>Startdatum: @vm.Startdatum.ToString("dd/MM/yyyy")</MudListItem>
+            <MudListItem>Einddatum: @vm.Einddatum.ToString("dd/MM/yyyy")</MudListItem>
+            <br />
+
+            <MudText Typo="Typo.h6">Gebruiker</MudText>
+            <MudListItem>Naam gebruiker: @vm.NaamGebruiker</MudListItem>
+            <MudListItem>Relatie gebruiker: @vm.RelatieGebruiker</MudListItem>
+
+            <MudText Typo="Typo.h6">Aanvrager</MudText>
+            <MudListItem>Email aanvrager: @vm.EmailAanvrager</MudListItem>
+            <MudListItem>Telefoonnummer aanvrager: @vm.TelefoonnummerAanvrager</MudListItem>
+            <MudListItem>Datum aanvraag: @vm.DatumAanvraag.ToString("dd/MM/yyyy")</MudListItem>
+            <MudListItem>Reden aanvraag: @vm.Reden</MudListItem>
+            
+            <MudText Typo="Typo.h6">Toegewezen beheerder</MudText>
+            <MudListItem>Voornaam: @vm.ToegewezenAan.Voornaam</MudListItem>
+            <MudListItem>Naam: @vm.ToegewezenAan.Naam</MudListItem>
+            <MudListItem>Email: @vm.ToegewezenAan.Email</MudListItem>
+        </MudList>
+    </MudContainer>
+}
+
+<style>
+    .btn_terug {
+        margin-left: auto;
+        background: #D3D3D3;
+    }
+</style>

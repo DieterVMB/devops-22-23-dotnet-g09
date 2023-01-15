@@ -1,0 +1,28 @@
+﻿@page "/data/geschiedenis"
+@using VirtualIT.Shared.VirtualMachines
+@using GridShared
+@using GridShared.Utility
+@using Microsoft.Extensions.Primitives
+@inject NavigationManager NavigationManager
+@inject HttpClient HttpClient
+@attribute [Authorize(Roles = "Administrator, Beheerder, Gebruiker")]
+
+<PageTitle>Geschiedenis</PageTitle>
+
+<div class="titleBox">
+    <span class="oi oi-magnifying-glass title-icon" aria-hidden="true" />
+
+    <p class="pageTitle">Overzicht verlopen virtuele machines</p>
+</div>
+
+<div class="top-row px-4" />
+
+@if (_task.IsCompleted)
+{
+    <GridComponent T="VirtualMachineDto.Detail" Grid="@_grid"></GridComponent>
+}
+else
+{
+    <p><em>Loading...</em></p>
+}
+

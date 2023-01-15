@@ -1,0 +1,100 @@
+﻿<div class="top-row ps-2 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">
+            <span class="oi oi-list" aria-hidden="true"></span> Virtual IT
+        </a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass heleNav" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        <AuthorizeView Roles="Administrator, Beheerder, Gebruiker" Context="GrootDeelNav">
+            <!--Virtual Machines-->
+            <div class="subtitle px-3">
+                <p>Virtuele Machines</p>
+            </div>
+
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="vm/overzicht">
+                    <span class="oi oi-magnifying-glass" aria-hidden="true"></span> Overzicht VM's
+                </NavLink>
+            </div>
+
+            <AuthorizeView Roles="Administrator, Beheerder">
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="vm/aanmaken">
+                        <span class="oi oi-plus" aria-hidden="true"></span> Aanmaken VM
+                    </NavLink>
+                </div>
+            </AuthorizeView>
+
+            <hr />
+
+            <!--Klanten-->
+            <div class="subtitle px-3">
+                <p>Klanten</p>
+            </div>
+
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="klanten">
+                    <span class="oi oi-magnifying-glass" aria-hidden="true"></span> Lijst klanten
+                </NavLink>
+            </div>
+
+            <AuthorizeView Roles="Administrator, Beheerder">
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="klant/aanmaken">
+                        <span class="oi oi-plus" aria-hidden="true"></span> Klant aanmaken
+                    </NavLink>
+                </div>
+            </AuthorizeView>
+
+            <hr />
+
+            <!--Beheerder-->
+            <div class="subtitle px-3">
+                <p>Beheerders</p>
+            </div>
+
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="beheerders">
+                    <span class="oi oi-magnifying-glass" aria-hidden="true"></span> Lijst beheerders
+                </NavLink>
+            </div>
+            <AuthorizeView Roles="Administrator">
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="beheerder/aanmaken">
+                        <span class="oi oi-person" aria-hidden="true"></span> Beheerder aanmaken
+                    </NavLink>
+                </div>
+            </AuthorizeView>
+
+            <hr />
+
+            <!--Data-->
+            <div class="subtitle px-3">
+                <p>Data</p>
+            </div>
+
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="data/geschiedenis">
+                    <span class="oi oi-clock" aria-hidden="true"></span> Geschiedenis
+                </NavLink>
+            </div>
+        </AuthorizeView>
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

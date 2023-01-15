@@ -1,0 +1,54 @@
+﻿@page "/klant/{id:int}"
+@attribute [Authorize(Roles = "Administrator, Beheerder, Gebruiker")]
+
+<PageTitle>Klant - @klant?.KlantNaam</PageTitle>
+
+@if(klant == null){
+    <p><em>Loading...</em></p>
+} else {
+    <MudContainer Class="titleBox">
+        <span class="oi oi-person title-icon" aria-hidden="true" />
+
+        @if(klant.Extern){
+            <p data-test-id="pagina-titel" class="pageTitle">Externe klant: @klant.KlantNaam</p>
+        }else{
+            <p data-test-id="pagina-titel" class="pageTitle">Interne klant: @klant.Departement @(klant.Opleiding != null ? $"- {klant.Opleiding}" : "")</p>
+        }
+    </MudContainer>
+    <MudContainer Class="inhoudBox">
+        <MudText Typo="Typo.h4">Informatie klant:</MudText>
+        <MudList>
+            @if (klant.Extern) {
+                <MudListItem Text="Type klant: Extern" />
+            } else {
+                <MudListItem Text="Type klant: Intern" />
+            }
+            @if (!klant.Extern){
+                <MudListItem>Departement: @klant.Departement</MudListItem>
+                @if (klant.Opleiding != null) {
+                    <MudListItem>Opleiding: @klant.Opleiding</MudListItem>
+                }
+            }else{
+                <MudListItem>Type externe klant: @klant.ExternType</MudListItem>
+            }
+            <MudText Typo="Typo.h6">
+                Aanspreekpunt klant:
+            </MudText>
+            <MudListItem>Voornaam: @klant.Aanspreekpunt.Voornaam</MudListItem>
+            <MudListItem>Naam: @klant.Aanspreekpunt.Naam</MudListItem>
+            <MudListItem>Email adres: @klant.Aanspreekpunt.Email</MudListItem>
+            <MudListItem>Telefoonnummer: @klant.Aanspreekpunt.Telefoonnummer</MudListItem>
+            <MudText Typo="Typo.h6">
+                Backup aanspreekpunt klant:
+            </MudText>
+            <MudListItem>Voornaam: @klant.BackupAanspreekpunt.Voornaam</MudListItem>
+            <MudListItem>Naam: @klant.BackupAanspreekpunt.Naam</MudListItem>
+            <MudListItem>Email adres: @klant.BackupAanspreekpunt.Email</MudListItem>
+            <MudListItem>Telefoonnummer: @klant.BackupAanspreekpunt.Telefoonnummer</MudListItem>
+        </MudList>
+    </MudContainer>
+}
+
+
+
+

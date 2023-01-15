@@ -1,0 +1,25 @@
+﻿<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            <!--<AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" /> (moet dit worden)-->
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <Authorizing>
+                </Authorizing>
+                <NotAuthorized>
+                    <h1>Sorry</h1>
+                    <p>Maar u bent niet geautoriseerd om deze pagina te raadplegen, of u bent niet ingelogd!<br />
+                        Indien u niet bent ingelogd kan u dat doen rechtsboven op deze pagina!</p>
+                </NotAuthorized>
+            </AuthorizeRouteView>
+            <!-- <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" /> -->
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        </Found>
+        <NotFound>
+            <PageTitle>Not found</PageTitle>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p role="alert">Sorry, maar er is niets op dit webadres!</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>
+
